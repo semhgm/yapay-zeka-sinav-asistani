@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+
 return new class extends Migration
 {
     /**
@@ -11,12 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subjects', function (Blueprint $table) {
+        Schema::create('exam_subject', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('exam_id')->nullable(); // sadece kolon
-
-            $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade'); // ayrı constraint
-            $table->string('name'); // Dersin adı (Türkçe, Matematik vs.)
+            $table->foreignId('exam_id')->constrained()->onDelete('cascade');
+            $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subjects');
+        Schema::dropIfExists('exam_subject');
     }
 };
