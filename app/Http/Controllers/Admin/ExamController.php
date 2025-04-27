@@ -3,40 +3,55 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Exam;
-use App\Models\Subject;
+use Illuminate\Http\Request;
+
 class ExamController extends Controller
 {
     public function index()
     {
-        $exams = Exam::all();
-        return view('admin.pages.exams.index', compact('exams'));
-    }
-    // Sınav ekleme formu gösterimi
-    public function create()
-    {
-        $subjects = Subject::all(); // Tüm dersleri çekiyoruz
-        return view('admin.pages.exams.create', compact('subjects'));
+        $exams = Exam::latest()->get();
+        return view('admin.exams.index', compact('exams'));
     }
 
-    // Sınav kaydetme işlemi
+    public function create()
+    {
+        return view('admin.exams.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'duration' => 'required|integer',
-            'selected_subjects' => 'required|array',
+            'duration' => 'required|integer|min:1',
         ]);
 
-        $exam = Exam::create([
-            'name' => $request->name,
-            'duration' => $request->duration,
-        ]);
+        Exam::create($request->only('name', 'duration'));
 
-        $exam->subjects()->attach($request->selected_subjects);
-
-        return redirect()->route('exams.index')->with('success', 'Sınav başarıyla oluşturuldu!');
+        return redirect()->route('admin.exams.index')->with('success', 'Sınav başarıyla oluşturuldu!');
     }
 
+    public function edit(Exam $exam)
+    {
+        return view('admin.exams.edit', compact('exam'));
+    }
+
+    public function update(Request $request, Exam $exam)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'duration' => 'required|integer|min:1',
+        ]);
+
+        $exam->update($request->only('name', 'duration'));
+
+        return redirect()->route('admin.exams.index')->with('success', 'Sınav başarıyla güncellendi!');
+    }
+
+    public function destroy(Exam $exam)
+    {
+        $exam->delete();
+
+        return redirect()->route('admin.exams.index')->with('success', 'Sınav başarıyla silindi!');
+    }
 }

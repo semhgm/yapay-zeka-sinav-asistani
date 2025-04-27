@@ -14,7 +14,7 @@ class Exam extends Model
     ];
     public function subjects()
     {
-        return $this->belongsToMany(Subject::class);
+        return $this->hasMany(Subject::class);
     }
 
     public function studentProgresses()
