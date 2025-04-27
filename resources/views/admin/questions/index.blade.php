@@ -30,7 +30,7 @@
                     <td>{{ $question->correct_answer }}</td>
                     <td>{{ $question->order_number }}</td>
                     <td>
-                        <a href="{{ route('admin.exams.subjects.questions.update', [$examId, $subject->id, $question->id]) }}" class="btn btn-warning btn-sm">Düzenle</a>
+                        <a href="{{ route('admin.exams.subjects.questions.edit', [$examId, $subject->id, $question->id]) }}" class="btn btn-warning btn-sm">Düzenle</a>
 
                         <form action="{{ route('admin.exams.subjects.questions.destroy', [$examId, $subject->id, $question->id]) }}" method="POST" style="display:inline-block;">
                             @csrf

@@ -18,7 +18,6 @@ use App\Http\Controllers\Admin\QuestionController;
 
 
 
-// Admin routes
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('exams', ExamController::class);
 
@@ -29,5 +28,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('questions', QuestionController::class);
         });
     });
+
+    // BAĞIMSIZ topic yönetimi
+    Route::resource('topics', \App\Http\Controllers\Admin\TopicController::class);
 });
 
