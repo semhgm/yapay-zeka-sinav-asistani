@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Subject;
 use App\Models\Question;
+use App\Models\Topic;
 use Illuminate\Http\Request;
 
 class QuestionController extends Controller
@@ -18,8 +19,10 @@ class QuestionController extends Controller
 
     public function create($examId, Subject $subject)
     {
-        return view('admin.questions.create', compact('examId', 'subject'));
+        $topics = Topic::all(); // tüm konuları alıyoruz
+        return view('admin.questions.create', compact('examId', 'subject', 'topics'));
     }
+
 
     public function store(Request $request, $examId, Subject $subject)
     {
@@ -27,13 +30,19 @@ class QuestionController extends Controller
             'question_text' => 'required|string',
             'correct_answer' => 'required|string|max:255',
             'order_number' => 'nullable|integer',
+            'topics' => 'required|array', // konu seçimi zorunlu
+            'topics.*' => 'exists:topics,id', // her seçilen konu ID'si doğru olmalı
         ]);
 
+        // Önce soruyu oluştur
         $question = $subject->questions()->create([
             'question_text' => $request->input('question_text'),
             'correct_answer' => $request->input('correct_answer'),
             'order_number' => $request->input('order_number'),
         ]);
+
+        // Sonra seçilen konuları soruya bağla (attach ile pivot tabloya yazılır)
+        $question->topics()->attach($request->topics);
 
         return redirect()->route('admin.exams.subjects.questions.index', [$examId, $subject->id])
             ->with('success', 'Soru başarıyla eklendi!');

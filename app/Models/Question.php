@@ -28,7 +28,7 @@ class Question extends Model
 
     public function topics()
     {
-        return $this->belongsToMany(Topic::class, 'question_topic');
+        return $this->belongsToMany(Topic::class, 'question_topics');
     }
 
 }
