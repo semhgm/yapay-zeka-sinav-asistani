@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SubjectSeeder::class,
         ]);
+        $this->call(FullMobilTestSeeder::class);
     }
 }
