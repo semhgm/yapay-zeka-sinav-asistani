@@ -15,6 +15,11 @@ class SubjectController extends Controller
         return view('admin.exams.subjects.index', compact('exam', 'subjects'));
     }
 
+    public function list()
+    {
+        $subjects = Subject::with('exam')->get();
+        return view('admin.subjects.index', compact('subjects'));
+    }
     public function create(Exam $exam)
     {
         return view('admin.exams.subjects.create', compact('exam'));

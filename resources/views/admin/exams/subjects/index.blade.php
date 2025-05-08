@@ -15,7 +15,8 @@
         <table class="table table-bordered table-striped">
             <thead>
             <tr>
-                <th>ID</th>
+                <th>Sınav Adı</th>
+                <th>Ders id</th>
                 <th>Ders Adı</th>
                 <th>İşlemler</th>
             </tr>
@@ -23,6 +24,7 @@
             <tbody>
             @foreach($subjects as $subject)
                 <tr>
+                    <td>{{$exam->name}}</td>
                     <td>{{ $subject->id }}</td>
                     <td>{{ $subject->name }}</td>
                     <td>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
+use Yajra\DataTables\Services\DataTable;
 
 class ExamController extends Controller
 {
@@ -14,11 +16,6 @@ class ExamController extends Controller
         return view('admin.exams.index', compact('exams'));
     }
 
-    public function create()
-    {
-        return view('admin.exams.create');
-    }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -26,11 +23,13 @@ class ExamController extends Controller
             'duration' => 'required|integer|min:1',
         ]);
 
-        Exam::create($request->only('name', 'duration'));
+        $exam = Exam::create($request->only('name', 'duration'));
 
-        return redirect()->route('admin.exams.index')->with('success', 'Sınav başarıyla oluşturuldu!');
+        return response()->json([
+            'success' => true,
+            'exam' => $exam
+        ]);
     }
-
     public function edit(Exam $exam)
     {
         return view('admin.exams.edit', compact('exam'));
@@ -45,13 +44,45 @@ class ExamController extends Controller
 
         $exam->update($request->only('name', 'duration'));
 
-        return redirect()->route('admin.exams.index')->with('success', 'Sınav başarıyla güncellendi!');
+        return response()->json([
+            'success' => true,
+            'exam' => $exam
+        ]);
     }
 
     public function destroy(Exam $exam)
     {
         $exam->delete();
 
-        return redirect()->route('admin.exams.index')->with('success', 'Sınav başarıyla silindi!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Sınav başarıyla silindi'
+        ]);
+    }
+    public function list()
+    {
+        $exam = Exam::query();
+
+        return DataTables::of($exam)
+            ->addColumn('detail', function ($exam) {
+                return '
+        <button class="btn btn-warning btn-sm editExam"
+                data-id="' . $exam->id . '"
+                data-name="' . $exam->name . '"
+                data-duration="' . $exam->duration . '">
+            Düzenle
+        </button>
+        <a href="/admin/exams/' . $exam->id . '/subjects"
+           class="btn btn-info btn-sm">
+           Ders Ekle
+        </a>
+        <button class="btn btn-danger btn-sm deleteExam"
+                data-id="' . $exam->id . '">
+            Sil
+        </button>
+    ';
+            })
+            ->rawColumns(['detail'])
+            ->make(true);
     }
 }

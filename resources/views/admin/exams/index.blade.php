@@ -1,48 +1,153 @@
 @extends('admin.layouts.app')
-
+<!-- exam.store route'u JS'e taşımak için -->
 @section('title', 'Sınavlar')
 
 @section('content')
     <div class="container">
         <h1>Sınavlar</h1>
 
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
+        <button id="addExamBtn" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#examModal">
+            Yeni Sınav Ekle
+        </button>
 
-        <a href="{{ route('admin.exams.create') }}" class="btn btn-primary mb-3">Yeni Sınav Ekle</a>
-
-        <table class="table table-bordered">
+        <table id="examTable" class="table table-bordered">
             <thead>
             <tr>
                 <th>ID</th>
                 <th>Adı</th>
                 <th>Süre (Dakika)</th>
-                <th>İşlemler</th>
+                <th>Detay</th>
             </tr>
             </thead>
-            <tbody>
-            @foreach($exams as $exam)
-                <tr>
-                    <td>{{ $exam->id }}</td>
-                    <td>{{ $exam->name }}</td>
-                    <td>{{ $exam->duration }}</td>
-                    <td class="d-flex gap-2">
-                        <a href="{{ route('admin.exams.edit', $exam->id) }}" class="btn btn-warning btn-sm">Düzenle</a>
-
-                        <form action="{{ route('admin.exams.destroy', $exam->id) }}" method="POST" style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Emin misin?')">Sil</button>
-                        </form>
-
-                        <a href="{{ route('admin.exams.subjects.index', $exam->id) }}" class="btn btn-info btn-sm">
-                            Dersleri Yönet
-                        </a>
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="examModal" tabindex="-1" aria-labelledby="examModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="examForm">
+                @csrf
+                <input type="hidden" name="id" id="examId">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="examModalLabel">Yeni Sınav Ekle</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="examName" class="form-label">Sınav Adı</label>
+                            <input type="text" class="form-control" id="examName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="examDuration" class="form-label">Süre (Dakika)</label>
+                            <input type="number" class="form-control" id="examDuration" name="duration" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Kaydet</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 @endsection
+
+@push('scripts')
+    <script>
+        let table = $('#examTable').DataTable({
+            ajax: '{{ route("admin.exams.list") }}',
+            columns: [
+                { data: 'id' },
+                { data: 'name' },
+                { data: 'duration' },
+                { data: 'detail' },
+            ]
+        });
+
+            // Bootstrap 5 modal objesini al
+            const examModalEl = document.getElementById('examModal');
+            const examModal = new bootstrap.Modal(examModalEl);
+
+            // Route store URL'yi meta'dan al
+            const storeUrl = document.querySelector('meta[name="route-exams-store"]').getAttribute('content');
+
+            // Form Submit
+            $(document).on('submit', '#examForm', function (e) {
+                e.preventDefault();
+                console.log("Form gönderildi");
+
+                let id = $('#examId').val();
+                let url = id ? `/admin/exams/${id}` : storeUrl;
+                let method = 'POST';
+                let formData = $(this).serialize();
+
+                if (id) {
+                    formData += '&_method=PUT';
+                }
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: formData,
+                    success: function () {
+                        examModal.hide();
+                        $('#examForm')[0].reset();
+                        $('#examId').val('');
+                        $('#examModalLabel').text('Yeni Sınav Ekle');
+                        table.ajax.reload();
+                    },
+                    error: function (xhr) {
+                        console.error(xhr.responseText);
+                        alert("Bir hata oluştu.");
+                    }
+                });
+            });
+
+            // Yeni Sınav butonu
+            $('#addExamBtn').on('click', function () {
+                $('#examForm')[0].reset();
+                $('#examId').val('');
+                $('#examModalLabel').text('Yeni Sınav Ekle');
+                examModal.show();
+            });
+
+            // Düzenle butonu
+            $(document).on('click', '.editExam', function () {
+                $('#examId').val($(this).data('id'));
+                $('#examName').val($(this).data('name'));
+                $('#examDuration').val($(this).data('duration'));
+                $('#examModalLabel').text('Sınavı Düzenle');
+                examModal.show();
+            });
+
+            // Sil butonu
+            $(document).on('click', '.deleteExam', function () {
+                if (confirm('Emin misiniz?')) {
+                    let id = $(this).data('id');
+                    $.ajax({
+                        url: `/admin/exams/${id}`,
+                        type: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function () {
+                            table.ajax.reload();
+                        },
+                        error: function () {
+                            alert("Silme işlemi başarısız.");
+                        }
+                    });
+                }
+            });
+
+            // Modal kapandığında formu sıfırla
+            examModalEl.addEventListener('hidden.bs.modal', function () {
+                $('#examForm')[0].reset();
+                $('#examId').val('');
+                $('#examModalLabel').text('Yeni Sınav Ekle');
+            });
+
+    </script>
+@endpush
