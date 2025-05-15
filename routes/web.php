@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\Admin\ExamController;
@@ -18,9 +19,9 @@ Route::get('/', [IndexController::class, 'index'])->name('index');
 // Admin paneli
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/', function () {
-        return view('admin.index');
-    })->name('index');
+
+    //dashboard
+    Route::get('/',[adminController::class,'index'])->name('index');
 
     // Exams
     Route::get('/exams', [ExamController::class, 'index'])->name('exams.index');
