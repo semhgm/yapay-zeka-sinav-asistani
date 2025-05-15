@@ -5,18 +5,31 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Topic;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class TopicController extends Controller
 {
     public function index()
     {
-        $topics = Topic::all();
-        return view('admin.topics.index', compact('topics'));
+        return view('admin.topics.index');
     }
 
-    public function create()
+    public function ajaxList()
     {
-        return view('admin.topics.create');
+        $topics = Topic::query();
+
+        return DataTables::of($topics)
+            ->addColumn('actions', function ($topic) {
+                return '
+                    <button class="btn btn-warning btn-sm editTopic"
+                        data-id="' . $topic->id . '"
+                        data-name="' . $topic->name . '">Düzenle</button>
+                    <button class="btn btn-danger btn-sm deleteTopic"
+                        data-id="' . $topic->id . '">Sil</button>
+                ';
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
     }
 
     public function store(Request $request)
@@ -25,14 +38,12 @@ class TopicController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        Topic::create($request->only('name'));
+        $topic = Topic::create($request->only('name'));
 
-        return redirect()->route('admin.topics.index')->with('success', 'Konu başarıyla eklendi.');
-    }
-
-    public function edit(Topic $topic)
-    {
-        return view('admin.topics.edit', compact('topic'));
+        return response()->json([
+            'success' => true,
+            'topic' => $topic,
+        ]);
     }
 
     public function update(Request $request, Topic $topic)
@@ -43,13 +54,19 @@ class TopicController extends Controller
 
         $topic->update($request->only('name'));
 
-        return redirect()->route('admin.topics.index')->with('success', 'Konu başarıyla güncellendi.');
+        return response()->json([
+            'success' => true,
+            'topic' => $topic,
+        ]);
     }
 
     public function destroy(Topic $topic)
     {
         $topic->delete();
 
-        return redirect()->route('admin.topics.index')->with('success', 'Konu silindi.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Konu silindi.',
+        ]);
     }
 }

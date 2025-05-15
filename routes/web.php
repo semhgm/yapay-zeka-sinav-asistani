@@ -50,12 +50,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('/exams/{exam}/subjects/{subject}/questions/{question}', [QuestionController::class, 'update'])->name('exams.subjects.questions.update');
     Route::delete('/exams/{exam}/subjects/{subject}/questions/{question}', [QuestionController::class, 'destroy'])->name('exams.subjects.questions.destroy');
 
-    // Topics (bağımsız)
+// Topic routes
     Route::get('/topics', [TopicController::class, 'index'])->name('topics.index');
-    Route::get('/topics/create', [TopicController::class, 'create'])->name('topics.create');
+    Route::get('/topics/ajax-list', [TopicController::class, 'ajaxList'])->name('topics.ajaxList');
     Route::post('/topics', [TopicController::class, 'store'])->name('topics.store');
-    Route::get('/topics/{topic}', [TopicController::class, 'show'])->name('topics.show');
-    Route::get('/topics/{topic}/edit', [TopicController::class, 'edit'])->name('topics.edit');
     Route::put('/topics/{topic}', [TopicController::class, 'update'])->name('topics.update');
     Route::delete('/topics/{topic}', [TopicController::class, 'destroy'])->name('topics.destroy');
 });
