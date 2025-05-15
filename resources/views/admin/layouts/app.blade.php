@@ -9,6 +9,7 @@
 
     <!-- AdminLTE 3.2 CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -43,6 +44,13 @@
                         <a href="{{ route('admin.exams.index') }}" class="nav-link">
                             <i class="nav-icon bi bi-journal"></i>
                             <p>Sınavlar</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('admin.topics.index') }}" class="nav-link">
+                            <i class="nav-icon bi bi-list-check"></i>
+                            <p>Konular</p>
                         </a>
                     </li>
                 </ul>

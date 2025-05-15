@@ -3,24 +3,35 @@
 @section('title', 'Sınavlar')
 
 @section('content')
-    <div class="container">
-        <h1>Sınavlar</h1>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <!-- Card Başlangıç -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title">Sınavlar</h3>
+                        <button id="addExamBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#examModal">
+                            <i class="fas fa-plus-circle"></i> Yeni Sınav Ekle
+                        </button>
+                    </div>
 
-        <button id="addExamBtn" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#examModal">
-            Yeni Sınav Ekle
-        </button>
-
-        <table id="examTable" class="table table-bordered">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Adı</th>
-                <th>Süre (Dakika)</th>
-                <th>Detay</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+                    <div class="card-body">
+                        <table id="examTable" class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Adı</th>
+                                <th>Süre (Dakika)</th>
+                                <th>Detay</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Card Bitiş -->
+            </div>
+        </div>
     </div>
 
     <!-- Modal -->
@@ -30,28 +41,28 @@
                 @csrf
                 <input type="hidden" name="id" id="examId">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title" id="examModalLabel">Yeni Sınav Ekle</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="examName" class="form-label">Sınav Adı</label>
+                        <div class="form-group mb-3">
+                            <label for="examName">Sınav Adı</label>
                             <input type="text" class="form-control" id="examName" name="name" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="examDuration" class="form-label">Süre (Dakika)</label>
+                        <div class="form-group mb-3">
+                            <label for="examDuration">Süre (Dakika)</label>
                             <input type="number" class="form-control" id="examDuration" name="duration" required>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success">Kaydet</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')

@@ -6,16 +6,33 @@ use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use Yajra\DataTables\Services\DataTable;
 
 class ExamController extends Controller
 {
+    // Sınav listesi sayfası
     public function index()
     {
-        $exams = Exam::latest()->get();
-        return view('admin.exams.index', compact('exams'));
+        return view('admin.exams.index');
     }
 
+    // DataTables için JSON liste
+    public function list()
+    {
+        $exams = Exam::query();
+
+        return DataTables::of($exams)
+            ->addColumn('detail', function ($exam) {
+                return '
+                    <button class="btn btn-warning btn-sm editExam" data-id="' . $exam->id . '" data-name="' . $exam->name . '" data-duration="' . $exam->duration . '">Düzenle</button>
+                    <a href="/admin/exams/' . $exam->id . '/subjects" class="btn btn-info btn-sm">Ders Ekle</a>
+                    <button class="btn btn-danger btn-sm deleteExam" data-id="' . $exam->id . '">Sil</button>
+                ';
+            })
+            ->rawColumns(['detail'])
+            ->make(true);
+    }
+
+    // Sınav oluştur
     public function store(Request $request)
     {
         $request->validate([
@@ -27,14 +44,17 @@ class ExamController extends Controller
 
         return response()->json([
             'success' => true,
-            'exam' => $exam
+            'exam' => $exam,
         ]);
     }
+
+    // Sınav düzenleme formu (kullanılmıyorsa kaldırılabilir)
     public function edit(Exam $exam)
     {
         return view('admin.exams.edit', compact('exam'));
     }
 
+    // Sınav güncelle
     public function update(Request $request, Exam $exam)
     {
         $request->validate([
@@ -46,43 +66,18 @@ class ExamController extends Controller
 
         return response()->json([
             'success' => true,
-            'exam' => $exam
+            'exam' => $exam,
         ]);
     }
 
+    // Sınav sil
     public function destroy(Exam $exam)
     {
         $exam->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Sınav başarıyla silindi'
+            'message' => 'Sınav başarıyla silindi',
         ]);
-    }
-    public function list()
-    {
-        $exam = Exam::query();
-
-        return DataTables::of($exam)
-            ->addColumn('detail', function ($exam) {
-                return '
-        <button class="btn btn-warning btn-sm editExam"
-                data-id="' . $exam->id . '"
-                data-name="' . $exam->name . '"
-                data-duration="' . $exam->duration . '">
-            Düzenle
-        </button>
-        <a href="/admin/exams/' . $exam->id . '/subjects"
-           class="btn btn-info btn-sm">
-           Ders Ekle
-        </a>
-        <button class="btn btn-danger btn-sm deleteExam"
-                data-id="' . $exam->id . '">
-            Sil
-        </button>
-    ';
-            })
-            ->rawColumns(['detail'])
-            ->make(true);
     }
 }
