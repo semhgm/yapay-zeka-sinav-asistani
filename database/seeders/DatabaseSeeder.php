@@ -16,5 +16,7 @@ class DatabaseSeeder extends Seeder
             SubjectSeeder::class,
         ]);
         $this->call(FullMobilTestSeeder::class);
+        $this->call(AdminUserSeeder::class);
+
     }
 }

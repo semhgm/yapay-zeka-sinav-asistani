@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\Admin\ExamController;
@@ -16,8 +17,13 @@ use App\Http\Controllers\Admin\TopicController;
 
 Route::get('/', [IndexController::class, 'index'])->name('index');
 
+
+
+Route::get('/login',[LoginController::class,'showLoginForm'])->name('login');
+Route::post('/login',[LoginController::class,'login'])->name('login.submit');
+Route::get('/logout',[LoginController::class,'logout'])->name('logout');
 // Admin paneli
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
 
     //dashboard
