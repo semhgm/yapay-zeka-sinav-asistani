@@ -43,6 +43,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/exams/{exam}/subjects/subjects-list', [SubjectController::class, 'ajaxList'])->name('exams.subjects.list');
 
     // Questions (Subject altına bağlı)
+    Route::get('/exams/{exam}/subjects/{subject}/questions/ajax-list', [QuestionController::class, 'ajaxList'])->name('exams.subjects.questions.ajaxList');
     Route::get('/exams/{exam}/subjects/{subject}/questions', [QuestionController::class, 'index'])->name('exams.subjects.questions.index');
     Route::get('/exams/{exam}/subjects/{subject}/questions/create', [QuestionController::class, 'create'])->name('exams.subjects.questions.create');
     Route::post('/exams/{exam}/subjects/{subject}/questions', [QuestionController::class, 'store'])->name('exams.subjects.questions.store');

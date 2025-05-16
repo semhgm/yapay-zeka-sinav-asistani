@@ -7,22 +7,48 @@ use App\Models\Subject;
 use App\Models\Question;
 use App\Models\Topic;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class QuestionController extends Controller
 {
     public function index($examId, Subject $subject)
     {
-        $questions = $subject->questions;
-        return view('admin.questions.index', compact('examId', 'subject', 'questions'));
+        $topics = Topic::all();
+        return view('admin.questions.index', compact('examId', 'subject', 'topics'));
     }
 
-
-    public function create($examId, Subject $subject)
+    public function ajaxList($examId, Subject $subject)
     {
-        $topics = Topic::all(); // tüm konuları alıyoruz
-        return view('admin.questions.create', compact('examId', 'subject', 'topics'));
-    }
+        $questions = $subject->questions()->with('topics')->get();
 
+        return DataTables::of($questions)
+            // Görselin tam asset yolu döndürülüyor
+            ->addColumn('image_path', function ($q) {
+                return $q->image_path ? asset('storage/' . $q->image_path) : null;
+            })
+
+            // İşlem butonları
+            ->addColumn('actions', function ($q) use ($examId, $subject) {
+                return '
+                <button class="btn btn-warning btn-sm editQuestion"
+                    data-id="' . $q->id . '"
+                    data-text="' . e($q->question_text) . '"
+                    data-correct="' . $q->correct_answer . '"
+                    data-order="' . $q->order_number . '"
+                    data-image="' . ($q->image_path ? asset('storage/' . $q->image_path) : '') . '">
+                    Düzenle
+                </button>
+                <button class="btn btn-danger btn-sm deleteQuestion"
+                    data-id="' . $q->id . '">Sil</button>
+            ';
+            })
+
+            // Soru metnini kısaltıyoruz
+            ->editColumn('question_text', fn($q) => \Str::limit($q->question_text, 80))
+
+            ->rawColumns(['actions'])
+            ->make(true);
+    }
 
     public function store(Request $request, $examId, Subject $subject)
     {
@@ -30,89 +56,91 @@ class QuestionController extends Controller
             'question_text' => 'required|string',
             'correct_answer' => 'required|string|max:255',
             'order_number' => 'nullable|integer',
-            'topics' => 'required|array', // konu seçimi zorunlu
-            'topics.*' => 'exists:topics,id', // her seçilen konu ID'si doğru olmalı
+            'choices' => 'required|array',
+            'topics' => 'required|array',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Önce soruyu oluştur
         $question = $subject->questions()->create([
-            'question_text' => $request->input('question_text'),
-            'correct_answer' => $request->input('correct_answer'),
-            'order_number' => $request->input('order_number'),
+            'question_text' => $request->question_text,
+            'correct_answer' => $request->correct_answer,
+            'order_number' => $request->order_number,
         ]);
 
-        // Sonra seçilen konuları soruya bağla (attach ile pivot tabloya yazılır)
+        foreach ($request->choices as $label => $text) {
+            $question->choices()->create([
+                'choice_label' => $label,
+                'choice_text' => $text,
+            ]);
+        }
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('questions', 'public');
+            $question->update(['image_path' => $path]);
+        }
+
         $question->topics()->attach($request->topics);
 
-        return redirect()->route('admin.exams.subjects.questions.index', [$examId, $subject->id])
-            ->with('success', 'Soru başarıyla eklendi!');
+        return response()->json(['success' => true]);
     }
 
-
-    public function edit($examId, Subject $subject, Question $question)
-    {
-        return view('admin.questions.edit', compact('examId', 'subject', 'question'));
-    }
-
-    public function show($examId, Subject $subject, Question $question)
-    {
-        return redirect()->route('admin.exams.subjects.questions.index', [$examId, $subject->id]);
-    }
     public function update(Request $request, $examId, Subject $subject, Question $question)
     {
-        // Validasyon (her zamanki gibi)
         $request->validate([
             'question_text' => 'required|string',
             'correct_answer' => 'required|string|max:255',
             'order_number' => 'nullable|integer',
-            'choices' => 'required|array', // Şıklar zorunlu
-            'choices.*' => 'required|string', // Her bir şık zorunlu
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Resim varsa validasyon
+            'choices' => 'required|array',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+
         ]);
 
-        // Soru güncellemesi
-        $updateData = [
-            'question_text' => $request->input('question_text'),
-            'correct_answer' => $request->input('correct_answer'),
-            'order_number' => $request->input('order_number'),
-        ];
+        $question->update([
+            'question_text' => $request->question_text,
+            'correct_answer' => $request->correct_answer,
+            'order_number' => $request->order_number,
+        ]);
 
-        // Eğer yeni resim seçilmişse
+        // Yeni görsel varsa yükle, eskiyi sil
         if ($request->hasFile('image')) {
-            // Mevcut resmi silebilirsin (isteğe bağlı)
             if ($question->image_path) {
-                \Storage::delete($question->image_path);
+                \Storage::disk('public')->delete($question->image_path);
             }
 
-            // Yeni resmi yükle
-            $path = $request->file('image')->store('questions'); // public/questions içine kaydeder
+            $path = $request->file('image')->store('questions', 'public');
             $updateData['image_path'] = $path;
         }
-
-        // Soruyu güncelle
-        $question->update($updateData);
-
-        // Şıkları önce silip sonra yeniden oluşturuyoruz (daha temiz yöntem)
         $question->choices()->delete();
 
-        foreach ($request->input('choices') as $label => $choiceText) {
+        foreach ($request->choices as $label => $text) {
             $question->choices()->create([
                 'choice_label' => $label,
-                'choice_text' => $choiceText,
+                'choice_text' => $text,
             ]);
         }
 
-        return redirect()->route('admin.exams.subjects.questions.index', [$examId, $subject->id])
-            ->with('success', 'Soru başarıyla güncellendi!');
-    }
+        if ($request->filled('topics')) {
+            $question->topics()->sync($request->topics);
+        }
 
+        return response()->json(['success' => true]);
+    }
 
     public function destroy($examId, Subject $subject, Question $question)
     {
+        $question->choices()->delete();
+        $question->topics()->detach();
         $question->delete();
 
-        return redirect()->route('admin.exams.subjects.questions.index', [$examId, $subject->id])
-            ->with('success', 'Soru başarıyla silindi!');
+        return response()->json(['success' => true]);
     }
 
+    public function show($examId, Subject $subject, Question $question)
+    {
+        return response()->json($question->load('choices', 'topics'));
+    }
+
+    public function edit($examId, Subject $subject, Question $question)
+    {
+        return $this->show($examId, $subject, $question);
+    }
 }
