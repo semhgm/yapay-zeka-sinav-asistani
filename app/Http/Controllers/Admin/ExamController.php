@@ -24,7 +24,7 @@ class ExamController extends Controller
             ->addColumn('detail', function ($exam) {
                 return '
                     <button class="btn btn-warning btn-sm editExam" data-id="' . $exam->id . '" data-name="' . $exam->name . '" data-duration="' . $exam->duration . '">Düzenle</button>
-                    <a href="/admin/exams/' . $exam->id . '/subjects" class="btn btn-info btn-sm">Ders Ekle</a>
+                    <a href="/admin/exams/' . $exam->id . '/subjects" class="btn btn-info btn-sm">Dersleri yönet</a>
                     <button class="btn btn-danger btn-sm deleteExam" data-id="' . $exam->id . '">Sil</button>
                 ';
             })

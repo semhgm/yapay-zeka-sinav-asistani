@@ -57,97 +57,101 @@
                 </div>
             </form>
         </div>
-    </div>@endsection
+    </div>
 
-@push('scripts')
-            <script>
-                const examId = {{ $exam->id }};
-                const storeUrl = `/admin/exams/${examId}/subjects`;
 
-                const subjectModalEl = document.getElementById('subjectModal');
-                const subjectModal = new bootstrap.Modal(subjectModalEl);
 
-                let table = $('#subjectTable').DataTable({
-                    ajax: `/admin/exams/${examId}/subjects/subjects-list`,
-                    columns: [
-                        { data: 'id' },
-                        { data: 'name' },
-                        { data: 'detail', orderable: false, searchable: false }
-                    ]
-                });
+    @push('scripts')
+        <script>
+            const examId = {{ $exam->id }};
+            const storeUrl = `/admin/exams/${examId}/subjects`;
 
-                // Form Submit
-                $(document).on('submit', '#subjectForm', function (e) {
-                    e.preventDefault();
+            const subjectModalEl = document.getElementById('subjectModal');
+            const subjectModal = new bootstrap.Modal(subjectModalEl);
 
-                    let id = $('#subjectId').val();
-                    let url = id ? `/admin/exams/${examId}/subjects/${id}` : storeUrl;
-                    let method = 'POST';
-                    let formData = $(this).serialize();
+            let table = $('#subjectTable').DataTable({
+                ajax: `/admin/exams/${examId}/subjects/subjects-list`,
+                columns: [
+                    { data: 'id' },
+                    { data: 'name' },
+                    { data: 'detail', orderable: false, searchable: false }
+                ]
+            });
 
-                    if (id) {
-                        formData += '&_method=PUT';
+            // Form Submit
+            $(document).on('submit', '#subjectForm', function (e) {
+                e.preventDefault();
+
+                let id = $('#subjectId').val();
+                let url = id ? `/admin/exams/${examId}/subjects/${id}` : storeUrl;
+                let method = 'POST';
+                let formData = $(this).serialize();
+
+                if (id) {
+                    formData += '&_method=PUT';
+                }
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: formData,
+                    success: function () {
+                        subjectModal.hide();
+                        $('#subjectForm')[0].reset();
+                        $('#subjectId').val('');
+                        $('#subjectModalLabel').text('Yeni Ders Ekle');
+                        table.ajax.reload();
+                    },
+                    error: function (xhr) {
+                        console.error(xhr.responseText);
+                        alert("Bir hata oluştu.");
                     }
+                });
+            });
+
+            // Yeni Ders Butonu
+            $('#addSubjectBtn').on('click', function () {
+                $('#subjectForm')[0].reset();
+                $('#subjectId').val('');
+                $('#subjectModalLabel').text('Yeni Ders Ekle');
+                subjectModal.show();
+            });
+
+            // Düzenle Butonu
+            $(document).on('click', '.editSubject', function () {
+                $('#subjectId').val($(this).data('id'));
+                $('#subjectName').val($(this).data('name'));
+                $('#subjectModalLabel').text('Dersi Düzenle');
+                subjectModal.show();
+            });
+
+            // Sil Butonu
+            $(document).on('click', '.deleteSubject', function () {
+                if (confirm('Emin misin?')) {
+                    let id = $(this).data('id');
 
                     $.ajax({
-                        url: url,
-                        type: method,
-                        data: formData,
+                        url: `/admin/exams/${examId}/subjects/${id}`,
+                        type: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
                         success: function () {
-                            subjectModal.hide();
-                            $('#subjectForm')[0].reset();
-                            $('#subjectId').val('');
-                            $('#subjectModalLabel').text('Yeni Ders Ekle');
                             table.ajax.reload();
                         },
-                        error: function (xhr) {
-                            console.error(xhr.responseText);
-                            alert("Bir hata oluştu.");
+                        error: function () {
+                            alert("Silinemedi.");
                         }
                     });
-                });
+                }
+            });
 
-                // Yeni Ders Butonu
-                $('#addSubjectBtn').on('click', function () {
-                    $('#subjectForm')[0].reset();
-                    $('#subjectId').val('');
-                    $('#subjectModalLabel').text('Yeni Ders Ekle');
-                    subjectModal.show();
-                });
+            // Modal kapandığında formu resetle
+            subjectModalEl.addEventListener('hidden.bs.modal', function () {
+                $('#subjectForm')[0].reset();
+                $('#subjectId').val('');
+                $('#subjectModalLabel').text('Yeni Ders Ekle');
+            });
+        </script>    @endpush
+@endsection
 
-                // Düzenle Butonu
-                $(document).on('click', '.editSubject', function () {
-                    $('#subjectId').val($(this).data('id'));
-                    $('#subjectName').val($(this).data('name'));
-                    $('#subjectModalLabel').text('Dersi Düzenle');
-                    subjectModal.show();
-                });
-
-                // Sil Butonu
-                $(document).on('click', '.deleteSubject', function () {
-                    if (confirm('Emin misin?')) {
-                        let id = $(this).data('id');
-
-                        $.ajax({
-                            url: `/admin/exams/${examId}/subjects/${id}`,
-                            type: 'DELETE',
-                            data: {
-                                _token: '{{ csrf_token() }}'
-                            },
-                            success: function () {
-                                table.ajax.reload();
-                            },
-                            error: function () {
-                                alert("Silinemedi.");
-                            }
-                        });
-                    }
-                });
-
-                // Modal kapandığında formu resetle
-                subjectModalEl.addEventListener('hidden.bs.modal', function () {
-                    $('#subjectForm')[0].reset();
-                    $('#subjectId').val('');
-                    $('#subjectModalLabel').text('Yeni Ders Ekle');
-                });
-            </script>    @endpush

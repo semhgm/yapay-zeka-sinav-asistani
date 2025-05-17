@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
@@ -23,45 +24,62 @@ Route::get('/login',[LoginController::class,'showLoginForm'])->name('login');
 Route::post('/login',[LoginController::class,'login'])->name('login.submit');
 Route::get('/logout',[LoginController::class,'logout'])->name('logout');
 // Admin paneli
+// Admin paneli
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
-
-    //dashboard
-    Route::get('/',[adminController::class,'index'])->name('index');
+    // Dashboard
+    Route::get('/', [AdminController::class, 'index'])->name('index');
 
     // Exams
-    Route::get('/exams', [ExamController::class, 'index'])->name('exams.index');
-    Route::get('/exams/create', [ExamController::class, 'create'])->name('exams.create');
-    Route::post('/exams', [ExamController::class, 'store'])->name('exams.store');
-    Route::get('/exams/{exam}', [ExamController::class, 'show'])->name('exams.show');
-    Route::get('/exams/{exam}/edit', [ExamController::class, 'edit'])->name('exams.edit');
-    Route::put('/exams/{exam}', [ExamController::class, 'update'])->name('exams.update');
-    Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('exams.destroy');
-    Route::get('/exams-list', [ExamController::class, 'list'])->name('exams.list');
+    Route::prefix('exams')->name('exams.')->group(function () {
 
-    // Subjects (Exam altına bağlı)
-    Route::get('/exams/{exam}/subjects', [SubjectController::class, 'index'])->name('exams.subjects.index');
-    Route::get('/exams/{exam}/subjects/create', [SubjectController::class, 'create'])->name('exams.subjects.create');
-    Route::post('/exams/{exam}/subjects', [SubjectController::class, 'store'])->name('exams.subjects.store');
-    Route::get('/exams/{exam}/subjects/{subject}/edit', [SubjectController::class, 'edit'])->name('exams.subjects.edit');
-    Route::put('/exams/{exam}/subjects/{subject}', [SubjectController::class, 'update'])->name('exams.subjects.update');
-    Route::delete('/exams/{exam}/subjects/{subject}', [SubjectController::class, 'destroy'])->name('exams.subjects.destroy');
-    Route::get('/exams/{exam}/subjects/subjects-list', [SubjectController::class, 'ajaxList'])->name('exams.subjects.list');
+        Route::get('/', [ExamController::class, 'index'])->name('index');
+        Route::get('/create', [ExamController::class, 'create'])->name('create');
+        Route::post('/', [ExamController::class, 'store'])->name('store');
+        Route::get('/{exam}/edit', [ExamController::class, 'edit'])->name('edit');
+        Route::put('/{exam}', [ExamController::class, 'update'])->name('update');
+        Route::delete('/{exam}', [ExamController::class, 'destroy'])->name('destroy');
+        Route::get('/list', [ExamController::class, 'list'])->name('list');
 
-    // Questions (Subject altına bağlı)
-    Route::get('/exams/{exam}/subjects/{subject}/questions/ajax-list', [QuestionController::class, 'ajaxList'])->name('exams.subjects.questions.ajaxList');
-    Route::get('/exams/{exam}/subjects/{subject}/questions', [QuestionController::class, 'index'])->name('exams.subjects.questions.index');
-    Route::get('/exams/{exam}/subjects/{subject}/questions/create', [QuestionController::class, 'create'])->name('exams.subjects.questions.create');
-    Route::post('/exams/{exam}/subjects/{subject}/questions', [QuestionController::class, 'store'])->name('exams.subjects.questions.store');
-    Route::get('/exams/{exam}/subjects/{subject}/questions/{question}', [QuestionController::class, 'show'])->name('exams.subjects.questions.show');
-    Route::get('/exams/{exam}/subjects/{subject}/questions/{question}/edit', [QuestionController::class, 'edit'])->name('exams.subjects.questions.edit');
-    Route::put('/exams/{exam}/subjects/{subject}/questions/{question}', [QuestionController::class, 'update'])->name('exams.subjects.questions.update');
-    Route::delete('/exams/{exam}/subjects/{subject}/questions/{question}', [QuestionController::class, 'destroy'])->name('exams.subjects.questions.destroy');
+        // Subjects (Exam altına bağlı)
+        Route::prefix('/{exam}/subjects')->name('subjects.')->group(function () {
+            Route::get('/', [SubjectController::class, 'index'])->name('index');
+            Route::get('/create', [SubjectController::class, 'create'])->name('create');
+            Route::post('/', [SubjectController::class, 'store'])->name('store');
+            Route::get('/{subject}/edit', [SubjectController::class, 'edit'])->name('edit');
+            Route::put('/{subject}', [SubjectController::class, 'update'])->name('update');
+            Route::delete('/{subject}', [SubjectController::class, 'destroy'])->name('destroy');
+            Route::get('/subjects-list', [SubjectController::class, 'ajaxList'])->name('list');
 
-// Topic routes
-    Route::get('/topics', [TopicController::class, 'index'])->name('topics.index');
-    Route::get('/topics/ajax-list', [TopicController::class, 'ajaxList'])->name('topics.ajaxList');
-    Route::post('/topics', [TopicController::class, 'store'])->name('topics.store');
-    Route::put('/topics/{topic}', [TopicController::class, 'update'])->name('topics.update');
-    Route::delete('/topics/{topic}', [TopicController::class, 'destroy'])->name('topics.destroy');
+            // Questions (Subject altına bağlı)
+            Route::prefix('{subject}/questions')->name('questions.')->group(function () {
+                Route::get('/ajax-list', [QuestionController::class, 'ajaxList'])->name('ajaxList');
+                Route::get('/', [QuestionController::class, 'index'])->name('index');
+                Route::get('/create', [QuestionController::class, 'create'])->name('create');
+                Route::post('/', [QuestionController::class, 'store'])->name('store');
+                Route::get('/{question}', [QuestionController::class, 'show'])->name('show');
+                Route::get('/{question}/edit', [QuestionController::class, 'edit'])->name('edit');
+                Route::put('/{question}', [QuestionController::class, 'update'])->name('update');
+                Route::delete('/{question}', [QuestionController::class, 'destroy'])->name('destroy');
+            });
+        });
+    });
+
+    // Topics
+    Route::prefix('topics')->name('topics.')->group(function () {
+        Route::get('/', [TopicController::class, 'index'])->name('index');
+        Route::get('/ajax-list', [TopicController::class, 'ajaxList'])->name('ajaxList');
+        Route::post('/', [TopicController::class, 'store'])->name('store');
+        Route::put('/{topic}', [TopicController::class, 'update'])->name('update');
+        Route::delete('/{topic}', [TopicController::class, 'destroy'])->name('destroy');
+    });
+
+    // Users
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/users-list', [UserController::class, 'ajaxList'])->name('ajax');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::put('/{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
 });

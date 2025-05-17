@@ -33,14 +33,17 @@
 
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
-        <a href="{{ url('/') }}" class="brand-link">
-            <span class="brand-text font-weight-light">Sınav Asistanı</span>
-            <br>
-            <span class="brand-text font-weight-light">
-    Hoşgeldiniz, {{ auth()->user()->name ?? 'Kullanıcı' }}
-</span>
-        </a>
-
+        @auth
+            <!-- Kullanıcı Paneli (İkonlu) -->
+            <div class="sidebar user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
+                <div class="image">
+                    <i class="fas fa-user-circle fa-2x text-white"></i>
+                </div>
+                <div class="info ms-2">
+                    <a href="#" class="d-block text-white">{{ auth()->user()->name }}</a>
+                </div>
+            </div>
+        @endauth
         <div class="sidebar">
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
@@ -71,7 +74,7 @@
 
                     <!-- Kullanıcılar -->
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{{route('admin.users.index')}}" class="nav-link">
                             <i class="nav-icon fas fa-users"></i>
                             <p>Kullanıcılar</p>
                         </a>
