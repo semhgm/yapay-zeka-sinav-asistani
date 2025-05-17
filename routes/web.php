@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Student\StudentController;
+use App\Http\Controllers\Teacher\TeacherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\Admin\ExamController;
@@ -25,7 +27,7 @@ Route::post('/login',[LoginController::class,'login'])->name('login.submit');
 Route::get('/logout',[LoginController::class,'logout'])->name('logout');
 // Admin paneli
 // Admin paneli
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware('auth','role:superadmin')->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard
     Route::get('/', [AdminController::class, 'index'])->name('index');
@@ -83,3 +85,13 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
     });
 });
+Route::middleware('auth','role:teacher')->prefix('teacher')->name('teacher.')->group(function () {
+    Route::get('/', [TeacherController::class, 'index'])->name('index');
+
+});
+Route::middleware('auth','role:student')->prefix('student')->name('student.')->group(function () {
+
+    Route::get('/', [StudentController::class, 'index'])->name('index');
+
+});
+

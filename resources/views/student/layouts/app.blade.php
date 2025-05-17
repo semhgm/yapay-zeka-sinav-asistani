@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="route-exams-store" content="{{ route('admin.exams.store') }}">
+    <meta name="route-exams-store" content="">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Panel')</title>
@@ -60,36 +60,18 @@
 
                     <!-- Dashboard -->
                     <li class="nav-item">
-                        <a href="{{ route('admin.index') }}" class="nav-link">
+                        <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Dashboard</p>
                         </a>
                     </li>
-
                     <!-- Sınavlar -->
                     <li class="nav-item">
-                        <a href="{{ route('admin.exams.index') }}" class="nav-link">
+                        <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-file-alt"></i>
                             <p>Sınavlar</p>
                         </a>
                     </li>
-
-                    <!-- Konular -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.topics.index') }}" class="nav-link">
-                            <i class="nav-icon fas fa-list-ul"></i>
-                            <p>Konular</p>
-                        </a>
-                    </li>
-
-                    <!-- Kullanıcılar -->
-                    <li class="nav-item">
-                        <a href="{{route('admin.users.index')}}" class="nav-link">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>Kullanıcılar</p>
-                        </a>
-                    </li>
-
                     <!-- Sınav Analizleri -->
                     <li class="nav-item">
                         <a href="#" class="nav-link">

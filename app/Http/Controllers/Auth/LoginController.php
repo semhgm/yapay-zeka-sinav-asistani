@@ -15,12 +15,28 @@ class LoginController extends Controller
     }
 
     public function login(Request $request){
-        request()->validate([
-            'email'=>'required|email',
-            'password'=>'required|min:6'
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6',
         ]);
-        if (Auth::attempt($request->only('email','password'))){
-            return redirect()->route('admin.index');
+
+        if (Auth::attempt($request->only('email', 'password'))) {
+            $user = Auth::user();
+
+            if ($user->hasRole('superadmin')) {
+                return redirect()->route('admin.index');
+            }
+
+            if ($user->hasRole('teacher')) {
+                return redirect()->route('teacher.index');
+            }
+
+            if ($user->hasRole('student')) {
+                return redirect()->route('student.index');
+            }
+
+            Auth::logout();
+            return redirect()->route('login')->withErrors(['email' => 'Rol tanımı yapılmamış.']);
         }
 
         return back()->withErrors(['email' => 'Bilgiler hatalı.'])->withInput();
@@ -28,6 +44,6 @@ class LoginController extends Controller
     public function logout(Request $request){
         Auth::logout();
         $request->session()->invalidate();
-        return redirect()->route('admin.login');
+        return redirect()->route('login');
     }
 }
