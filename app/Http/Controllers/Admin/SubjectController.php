@@ -40,6 +40,7 @@ class SubjectController extends Controller
 
         $subject = $exam->subjects()->create([
             'name' => $request->name,
+
         ]);
 
         return response()->json([

@@ -16,7 +16,10 @@ class Exam extends Model
     {
         return $this->hasMany(Subject::class);
     }
-
+    public function questions()
+    {
+        return $this->hasMany(\App\Models\Question::class);
+    }
     public function studentProgresses()
     {
         return $this->hasMany(StudentProgress::class);

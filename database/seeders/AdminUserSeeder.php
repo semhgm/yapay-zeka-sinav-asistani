@@ -14,12 +14,12 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::updateOrCreate(
+        \App\Models\User::updateOrCreate(
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Yönetici',
-                'password' => Hash::make('123456'),
+                'password' => bcrypt('123456')
             ]
-        );
+        )->assignRole('superadmin');
     }
 }

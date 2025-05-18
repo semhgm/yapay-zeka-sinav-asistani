@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Exam;
 use App\Models\Subject;
 use App\Models\Question;
 use App\Models\Topic;
@@ -50,8 +51,7 @@ class QuestionController extends Controller
             ->make(true);
     }
 
-    public function store(Request $request, $examId, Subject $subject)
-    {
+    public function store(Request $request, Exam $exam, Subject $subject)    {
         $request->validate([
             'question_text' => 'required|string',
             'correct_answer' => 'required|string|max:255',
@@ -65,6 +65,8 @@ class QuestionController extends Controller
             'question_text' => $request->question_text,
             'correct_answer' => $request->correct_answer,
             'order_number' => $request->order_number,
+            'exam_id' => $exam->id, // 👈 BURAYI EKLE
+
         ]);
 
         foreach ($request->choices as $label => $text) {

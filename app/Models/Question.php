@@ -9,6 +9,7 @@ class Question extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'exam_id',
         'subject_id',
         'question_text',
         'image_path',
@@ -19,6 +20,10 @@ class Question extends Model
     public function subject()
     {
         return $this->belongsTo(Subject::class);
+    }
+    public function exam()
+    {
+        return $this->belongsTo(Exam::class);
     }
 
     public function choices()

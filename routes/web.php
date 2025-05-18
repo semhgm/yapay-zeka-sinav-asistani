@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\TopicController;
+use App\Http\Controllers\Student\SExamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,6 +93,9 @@ Route::middleware('auth','role:teacher')->prefix('teacher')->name('teacher.')->g
 Route::middleware('auth','role:student')->prefix('student')->name('student.')->group(function () {
 
     Route::get('/', [StudentController::class, 'index'])->name('index');
+    Route::get('/exams',[SExamController::class,'index'])->name('exams.index');
+    Route::get('/exams/{exam}/start', [SExamController::class, 'start'])->name('exams.start');
+    Route::post('/exams/{exam}/submit', [SExamController::class, 'submit'])->name('exams.submit');
 
 });
 

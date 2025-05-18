@@ -54,43 +54,84 @@
                 </div>
             </div>
         @endauth
-        <div class="sidebar">
-            <nav class="mt-2">
-                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+            <div class="sidebar">
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+                        <!-- Dashboard -->
+                        <li class="nav-item">
+                            <a href="{{route('student.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-home"></i>
+                                <p>Dashboard</p>
+                            </a>
+                        </li>
 
-                    <!-- Dashboard -->
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
-                            <p>Dashboard</p>
-                        </a>
-                    </li>
-                    <!-- Sınavlar -->
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-file-alt"></i>
-                            <p>Sınavlar</p>
-                        </a>
-                    </li>
-                    <!-- Sınav Analizleri -->
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-chart-line"></i>
-                            <p>Sınav Analizleri</p>
-                        </a>
-                    </li>
+                        <!-- Sınavlar -->
+                        <li class="nav-item">
+                            <a href="{{route('student.exams.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-file-alt"></i>
+                                <p>Sınavlar</p>
+                            </a>
+                        </li>
 
-                    <!-- Ayarlar -->
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-cog"></i>
-                            <p>Ayarlar</p>
-                        </a>
-                    </li>
+                        <!-- Sınav Analizleri -->
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-chart-pie"></i>
+                                <p>Analizler</p>
+                            </a>
+                        </li>
 
-                </ul>
-            </nav>
-        </div>
+                        <!-- Notlarım -->
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-clipboard-list"></i>
+                                <p>Notlarım</p>
+                            </a>
+                        </li>
+
+                        <!-- Çalışma Programı -->
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-tasks"></i>
+                                <p>Çalışma Programı</p>
+                            </a>
+                        </li>
+
+                        <!-- Takvim -->
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-calendar-alt"></i>
+                                <p>Takvim</p>
+                            </a>
+                        </li>
+
+                        <!-- Bildirimler (Ekstra öneri) -->
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-bell"></i>
+                                <p>Bildirimler</p>
+                            </a>
+                        </li>
+
+
+                        <!-- Destek (Ekstra öneri) -->
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-life-ring"></i>
+                                <p>Destek</p>
+                            </a>
+                        </li>
+
+                        <!-- Kullanıcı Ayarları -->
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-user-cog"></i>
+                                <p>Hesap Ayarları</p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
     </aside>
     <!-- Content -->
     <div class="content-wrapper p-3">
