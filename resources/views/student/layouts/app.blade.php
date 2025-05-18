@@ -75,7 +75,7 @@
 
                         <!-- Sınav Analizleri -->
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('student.exams.analysis')}}" class="nav-link">
                                 <i class="nav-icon fas fa-chart-pie"></i>
                                 <p>Analizler</p>
                             </a>
@@ -139,11 +139,24 @@
     </div>
 
 </div>
+<!-- Required JavaScripts -->
+{{-- jQuery (make sure version is compatible with your Bootstrap version) --}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- AdminLTE JS -->
+{{-- Popper.js (Needed for Bootstrap 4 tooltips, popovers, etc., often included in bundle) --}}
+{{-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script> --}}
+{{-- OR use the bundle which includes Popper --}}
+
+{{-- Bootstrap JS --}}
+{{-- Or if using separate files: <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.min.js"></script> --}}
+
+{{-- DataTables JS (Assuming you're using DataTables based on $('#examTable').DataTable()) --}}
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script> {{-- If using Bootstrap 4 styling --}}
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
-<!-- bootstrap -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 @stack('scripts')
 
 </body>

@@ -30,5 +30,10 @@ class StudentAnswer extends Model
     {
         return $this->belongsTo(Question::class);
     }
+    public function choice()
+    {
+        return $this->belongsTo(Choice::class, 'given_answer');
+    }
+
 
 }

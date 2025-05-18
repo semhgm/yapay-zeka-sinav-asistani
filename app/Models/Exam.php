@@ -24,6 +24,10 @@ class Exam extends Model
     {
         return $this->hasMany(StudentProgress::class);
     }
+    public function studentAnswers()
+    {
+        return $this->hasMany(StudentAnswer::class);
+    }
 
     public function studentExamAnalyses()
     {
