@@ -100,6 +100,6 @@ Route::middleware('auth','role:student')->prefix('student')->name('student.')->g
     Route::get('analyses', [SExamController::class, 'analysisList'])->name('exams.analysis');
     Route::get('/analyses/{exam}', [SExamController::class, 'analysisDetail'])->name('exams.analysis.detail');
     // PDF olarak dışa aktar ve AI API'ye gönder
-    Route::post('{exam}/export-analysis', [SExamController::class, 'exportAnalysis'])->name('analysis.export');
+    Route::post('/ai-analysis', [SExamController::class, 'aiAnalysis'])->name('ai.analysis');
 });
 

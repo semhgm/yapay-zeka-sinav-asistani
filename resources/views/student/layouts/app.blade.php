@@ -6,16 +6,20 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Panel')</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- AdminLTE 3.2 CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.min.js"></script>
     @stack('styles')
 </head>
 <body class="hold-transition sidebar-mini">
@@ -141,23 +145,17 @@
 </div>
 <!-- Required JavaScripts -->
 {{-- jQuery (make sure version is compatible with your Bootstrap version) --}}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-{{-- Popper.js (Needed for Bootstrap 4 tooltips, popovers, etc., often included in bundle) --}}
-{{-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script> --}}
-{{-- OR use the bundle which includes Popper --}}
-
-{{-- Bootstrap JS --}}
-{{-- Or if using separate files: <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.min.js"></script> --}}
-
-{{-- DataTables JS (Assuming you're using DataTables based on $('#examTable').DataTable()) --}}
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script> {{-- If using Bootstrap 4 styling --}}
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 @stack('scripts')
-
+<div class="toasts-top-right fixed position-fixed p-3" style="z-index: 9999; top: 1rem; right: 1rem;"></div>
 </body>
 </html>

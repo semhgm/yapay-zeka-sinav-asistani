@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use App\Models\StudentAnswer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class SExamController extends Controller
 {
@@ -92,6 +93,52 @@ class SExamController extends Controller
             'correct' => $correct,
             'wrong' => $wrong,
             'net' => round($net, 2),
+        ]);
+    }
+
+    public function aiAnalysis(Request $request)
+    {
+        $data = $request->validate([
+            'correct' => 'required|integer',
+            'wrong' => 'required|integer',
+            'empty' => 'required|integer',
+            'net' => 'required',
+            'topics' => 'required|array',
+        ]);
+
+        $message = "
+            Aşağıdaki sınav sonuçlarına göre öğrenciyi değerlendir:
+
+                - Doğru: {$data['correct']}
+                - Yanlış: {$data['wrong']}
+                - Boş: {$data['empty']}
+                - Net: {$data['net']}
+                - Konular: " . implode(', ', $data['topics']) . "
+
+                Görevlerin:
+                1. Öğrencinin eksik olduğu alanları yaz.
+                2. Genel başarı seviyesini değerlendir.
+                3. Öğrenciye sade, mantıklı ve cesaretlendirici öneriler sun.
+                4. Metni yalın, sade TÜRKÇE ile yaz. Bozuk karakter, emoji veya İngilizce kelime kullanma.
+                5. Cevabın sonuna 'Umarım bu yorum sana yardımcı olur!' cümlesini ekle.
+            ";
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . env('OPENROUTER_API_KEY'),
+            'HTTP-Referer' => 'http://localhost', // gerçek domainin neyse yaz, şimdilik böyle kalabilir
+            'Content-Type' => 'application/json',
+        ])->post('https://openrouter.ai/api/v1/chat/completions', [
+            'model' => 'meta-llama/llama-3-70b-instruct',
+            'messages' => [
+                ['role' => 'system', 'content' => 'Sen profesyonel bir Türkçe eğitim koçusun. Öğrencilere sınav sonuçlarına göre akıcı, sade ve düzgün bir TÜRKÇE ile rehberlik ediyorsun. Metin içinde bozuk karakter veya yabancı dil kullanmıyorsun.'],
+                ['role' => 'user', 'content' => $message]
+            ]
+        ]);
+
+        $aiReply = optional($response->json()['choices'][0]['message'])['content'] ?? 'Yorum alınamadı.';
+
+        return response()->json([
+            'comment' => $aiReply
         ]);
     }
 }

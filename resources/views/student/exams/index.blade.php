@@ -7,12 +7,21 @@
         <h3>Sınavlarım</h3>
         <div class="row">
             @forelse($exams as $exam)
-                <div class="col-md-4">
-                    <div class="card mb-3 shadow-sm">
+                <div class="col-md-3">
+                    <div class="card card-outline card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ $exam->name }}</h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
                         <div class="card-body">
-                            <h5 class="card-title">{{ $exam->name }}</h5>
-                            <p class="card-text">Süre: {{ $exam->duration }} dakika</p>
-                            <a href="{{ route('student.exams.start', $exam->id) }}" class="btn btn-primary">Sınava Başla</a>                        </div>
+                            <p>Süre: {{ $exam->duration }} dakika</p>
+                            <a href="{{ route('student.exams.start', $exam->id) }}" class="btn btn-primary">Sınava Başla</a>
+                        </div>
                     </div>
                 </div>
             @empty
@@ -20,6 +29,5 @@
                     <p>Henüz tanımlı bir sınav yok.</p>
                 </div>
             @endforelse
-        </div>
-    </div>
+        </div>    </div>
 @endsection
