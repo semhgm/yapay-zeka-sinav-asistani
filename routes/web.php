@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Student\NotesController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Teacher\TeacherController;
 use Illuminate\Support\Facades\Route;
@@ -101,5 +102,12 @@ Route::middleware('auth','role:student')->prefix('student')->name('student.')->g
     Route::get('/analyses/{exam}', [SExamController::class, 'analysisDetail'])->name('exams.analysis.detail');
     // PDF olarak dışa aktar ve AI API'ye gönder
     Route::post('/ai-analysis', [SExamController::class, 'aiAnalysis'])->name('ai.analysis');
+
+    Route::prefix('/notes')->name('notes.')->group(function () {
+        Route::get('/', [NotesController::class, 'index'])->name('index');
+        Route::post('/', [NotesController::class, 'store'])->name('store');
+        Route::get('/{note}', [NotesController::class, 'destroy'])->name('destroy');
+    });
+
 });
 

@@ -23,6 +23,10 @@ class User extends Authenticatable
         'email',
         'password',
     ];
+    public function notes()
+    {
+        return $this->hasMany(\App\Models\Note::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

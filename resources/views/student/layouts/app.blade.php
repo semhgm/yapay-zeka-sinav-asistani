@@ -87,7 +87,7 @@
 
                         <!-- Notlarım -->
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('student.notes.index')}}" class="nav-link">
                                 <i class="nav-icon fas fa-clipboard-list"></i>
                                 <p>Notlarım</p>
                             </a>
