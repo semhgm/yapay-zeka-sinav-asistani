@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Note;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class NotesController extends Controller
 {

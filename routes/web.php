@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Student\CalendarController;
 use App\Http\Controllers\Student\NotesController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Teacher\TeacherController;
@@ -24,15 +25,15 @@ Route::get('/', [IndexController::class, 'index'])->name('index');
 
 
 
-Route::get('/login',[LoginController::class,'showLoginForm'])->name('login');
-Route::post('/login',[LoginController::class,'login'])->name('login.submit');
+
+Route::get('/',[LoginController::class,'showLoginForm'])->name('login');
+Route::post('/',[LoginController::class,'login'])->name('login.submit');
 Route::get('/logout',[LoginController::class,'logout'])->name('logout');
 // Admin paneli
 // Admin paneli
 Route::middleware('auth','role:superadmin')->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard
-    Route::get('/', [AdminController::class, 'index'])->name('index');
 
     // Exams
     Route::prefix('exams')->name('exams.')->group(function () {
@@ -108,6 +109,14 @@ Route::middleware('auth','role:student')->prefix('student')->name('student.')->g
         Route::post('/', [NotesController::class, 'store'])->name('store');
         Route::get('/{note}', [NotesController::class, 'destroy'])->name('destroy');
     });
+    Route::prefix('/calendar')->name('calendar.')->group(function () {
+
+        Route::get('/', [CalendarController::class, 'index'])->name('index');
+        Route::get('/events', [CalendarController::class, 'events'])->name('events'); // JSON verisi
+        Route::post('/store', [CalendarController::class, 'store'])->name('store');
+        Route::delete('/destroy/{id}', [CalendarController::class, 'destroy'])->name('destroy');
+        Route::delete('/destroy-all', [CalendarController::class, 'destroyAll'])->name('destroyAll');
+    });
+
 
 });
-
