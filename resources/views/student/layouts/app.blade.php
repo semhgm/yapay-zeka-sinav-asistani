@@ -95,7 +95,7 @@
 
                         <!-- Çalışma Programı -->
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{route('student.schedule.index')}}" class="nav-link">
                                 <i class="nav-icon fas fa-tasks"></i>
                                 <p>Çalışma Programı</p>
                             </a>

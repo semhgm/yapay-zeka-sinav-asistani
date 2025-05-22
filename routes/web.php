@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Student\CalendarController;
 use App\Http\Controllers\Student\NotesController;
+use App\Http\Controllers\Student\TaskController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Teacher\TeacherController;
 use Illuminate\Support\Facades\Route;
@@ -116,6 +117,14 @@ Route::middleware('auth','role:student')->prefix('student')->name('student.')->g
         Route::post('/store', [CalendarController::class, 'store'])->name('store');
         Route::delete('/destroy/{id}', [CalendarController::class, 'destroy'])->name('destroy');
         Route::delete('/destroy-all', [CalendarController::class, 'destroyAll'])->name('destroyAll');
+    });
+
+    Route::prefix('/work-schedule')->name('schedule.')->group(function () {
+
+        Route::get('/', [TaskController::class, 'index'])->name('index');
+        Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+        Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+        Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggleComplete'])->name('tasks.toggle');
     });
 
 
