@@ -5,8 +5,10 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Student\CalendarController;
 use App\Http\Controllers\Student\NotesController;
+use App\Http\Controllers\Student\NotificationController;
 use App\Http\Controllers\Student\TaskController;
 use App\Http\Controllers\Student\StudentController;
+use App\Http\Controllers\Student\TimelineController;
 use App\Http\Controllers\Teacher\TeacherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
@@ -15,6 +17,7 @@ use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\TopicController;
 use App\Http\Controllers\Student\SExamController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +39,7 @@ Route::middleware('auth','role:superadmin')->prefix('admin')->name('admin.')->gr
 
     // Dashboard
 
+    Route::get('/', [AdminController::class, 'index'])->name('index');
     // Exams
     Route::prefix('exams')->name('exams.')->group(function () {
 
@@ -125,6 +129,12 @@ Route::middleware('auth','role:student')->prefix('student')->name('student.')->g
         Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
         Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
         Route::patch('/tasks/{task}/toggle', [TaskController::class, 'toggleComplete'])->name('tasks.toggle');
+    });
+    Route::prefix('/notification')->name('notifications.')->group(function () {
+
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::post('{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
+
     });
 
 

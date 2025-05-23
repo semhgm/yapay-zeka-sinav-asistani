@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Exam;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-
+use App\Models\User;
 class ExamController extends Controller
 {
     // Sınav listesi sayfası
@@ -42,12 +43,25 @@ class ExamController extends Controller
 
         $exam = Exam::create($request->only('name', 'duration'));
 
+        // Tüm öğrencilere bildirim gönder
+        $students = User::whereHas('roles', function ($q) {
+            $q->where('name', 'student');
+        })->get();
+
+        foreach ($students as $student) {
+            Notification::create([
+                'user_id' => $student->id,
+                'title' => 'Yeni Deneme Yayınlandı',
+                'description' => $exam->name . ' sınavı sisteme eklendi.',
+                'type' => 'exam',
+            ]);
+        }
+
         return response()->json([
             'success' => true,
             'exam' => $exam,
         ]);
     }
-
     // Sınav düzenleme formu (kullanılmıyorsa kaldırılabilir)
     public function edit(Exam $exam)
     {
