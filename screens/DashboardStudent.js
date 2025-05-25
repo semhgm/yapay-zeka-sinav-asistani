@@ -1,28 +1,59 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList } from 'react-native';
-import { getStudentProgress } from '../services/api';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function DashboardStudent() {
-  const [progress, setProgress] = useState([]);
+  const navigation = useNavigation();
 
-  useEffect(() => {
-    getStudentProgress(1).then(setProgress); // örnek user_id = 1
-  }, []);
+  const modules = [
+    { title: "📅 Takvim", screen: "Calendar" },
+    { title: "🧠 Çalışma Programı", screen: "StudyPlan" },
+    { title: "📈 Sınav Analizleri", screen: "ExamAnalysis" },
+    { title: "📝 Notlarım", screen: "Notes" },
+    { title: "🔔 Bildirimler", screen: "Notifications" }, // Yeni eklendi
+  ];
 
   return (
-    <SafeAreaView>
-    <View style={{ padding: 20 }}>
-        <Text style={{ fontSize: 22, fontWeight: 'bold' }}>İlerleme Durumu</Text>
-        <FlatList
-          data={progress}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <Text>📚 {item.exam_id} - {item.correct_count} doğru, {item.wrong_count} yanlış</Text>
-          )}
-        />
-      </View>
-  </SafeAreaView>
-   
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.heading}>Hoş geldin 👋</Text>
+      {modules.map((mod, idx) => (
+        <TouchableOpacity
+          key={idx}
+          style={styles.card}
+          onPress={() => navigation.navigate(mod.screen)}
+        >
+          <Text style={styles.cardText}>{mod.title}</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    backgroundColor: "#f8f8f8",
+    flexGrow: 1,
+  },
+  heading: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 25,
+    color: "#333",
+  },
+  card: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 15,
+    marginBottom: 15,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  cardText: {
+    fontSize: 18,
+    color: "#555",
+  },
+});

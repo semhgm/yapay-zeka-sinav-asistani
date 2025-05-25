@@ -1,18 +1,54 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from "react";
+import { login as loginRequest, getAuthToken, clearAuth } from "../services/api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [role, setRole] = useState(null);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = (email, password) => {
-    if (email.includes('admin')) setRole('superadmin');
-    else if (email.includes('hoca')) setRole('hoca');
-    else setRole('ogrenci');
+  useEffect(() => {
+    const loadAuthData = async () => {
+      const storedToken = await getAuthToken();
+      if (storedToken) {
+        setToken(storedToken);
+        const storedUser = await AsyncStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      }
+      setLoading(false);
+    };
+
+    loadAuthData();
+  }, []);
+
+  const login = async (email, password) => {
+    try {
+      const result = await loginRequest(email, password);
+      setUser(result.user);
+      setToken(result.token);
+      return result;
+    } catch (error) {
+      console.error("Login Error:", error);
+      throw error;
+    }
   };
 
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    clearAuth();
+  };
+
+  if (loading) {
+    return null; // or a loading spinner
+  }
+
   return (
-    <AuthContext.Provider value={{ role, login }}>
+    <AuthContext.Provider value={{ user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
