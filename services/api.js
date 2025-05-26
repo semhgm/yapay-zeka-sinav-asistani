@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE = "http://a10.0.2.2:8000/api"; // Android emulator için doğru IP
+const API_BASE = "http://10.0.2.2:8000/api"; // Android emulator için doğru IP
 
 export async function login(email, password) {
   try {

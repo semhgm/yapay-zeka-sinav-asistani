@@ -37,11 +37,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    clearAuth();
-  };
+const logout = async () => {
+  await clearAuth();
+  setUser(null);
+  setToken(null);
+};
 
   if (loading) {
     return null; // or a loading spinner
