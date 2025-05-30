@@ -8,7 +8,6 @@ use App\Http\Controllers\Student\NotesController;
 use App\Http\Controllers\Student\NotificationController;
 use App\Http\Controllers\Student\TaskController;
 use App\Http\Controllers\Student\StudentController;
-use App\Http\Controllers\Student\TimelineController;
 use App\Http\Controllers\Teacher\TeacherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
@@ -17,6 +16,7 @@ use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\TopicController;
 use App\Http\Controllers\Student\SExamController;
+use App\Http\Controllers\Student\CalendarEventController;
 
 
 /*
@@ -138,4 +138,11 @@ Route::middleware('auth','role:student')->prefix('student')->name('student.')->g
     });
 
 
+});
+
+// Calendar Event Routes
+Route::middleware(['auth'])->group(function () {
+    Route::post('/student/calendar/events', [CalendarEventController::class, 'store'])->name('calendar.events.store');
+    Route::put('/student/calendar/events/{event}', [CalendarEventController::class, 'update'])->name('calendar.events.update');
+    Route::delete('/student/calendar/events/{event}', [CalendarEventController::class, 'destroy'])->name('calendar.events.destroy');
 });

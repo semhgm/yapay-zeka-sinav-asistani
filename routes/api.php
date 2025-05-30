@@ -3,9 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\StudentProgress;
-use App\Http\Controllers\Mobil\LoginController;
 use App\Http\Controllers\Mobil\StudentProgressController;
-
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,13 +17,5 @@ use App\Http\Controllers\Mobil\StudentProgressController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('/login', [AuthController::class, 'login']);
 
-
-
-
-
-Route::post('/mobil/login', [LoginController::class, 'login']);
-Route::get('/mobil/progress/{user_id}', [StudentProgressController::class, 'show']);
